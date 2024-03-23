@@ -61,6 +61,23 @@ public class CajeroController {
         }
     }
 
+    @PutMapping("/deposito")
+    public Object[] depositBody(@RequestBody Cajero cajero){
+        try {
+            if(cajero.getAmount() <= 0){
+                throw new RuntimeException("El monto debe ser mayor a 0");
+            }
+            Cajero cajero1 = cajeroRepository.findById(cajero.getId()).orElseThrow(() -> new RuntimeException("Cajero no encontrado"));
+            System.out.println(cajero1.getAmount());
+            cajero1.setAmount(cajero1.getAmount() + cajero.getAmount());
+            Object [] res;
+            res = new Object[]{cajeroRepository.save(cajero1), "El saldo actualizado es: " + cajero1.getAmount()};
+            return res;
+        } catch (Exception e) {
+            throw new RuntimeException("El monto no es válido");
+        }
+    }
+
     @PostMapping()
     public Cajero createCajero(@RequestBody Cajero cajero){
         return cajeroRepository.save(cajero);
